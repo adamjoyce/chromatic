@@ -75,4 +75,13 @@ public class PlayerCharacter : MonoBehaviour
     //{
     //    applyJumpForce = true;
     //}
+
+    /* Behaviour for when a collision occurs. */
+    private void OnCollisionEnter2d(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Block")
+        {
+            // Slow game time and end game.
+        }
+    }
 }
