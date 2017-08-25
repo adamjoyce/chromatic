@@ -30,9 +30,13 @@ public class BlockManager : MonoBehaviour
     /* Spawns a line of blocks. */
     private void SpawnBlocks()
     {
+        // Calculate the values needed for the block spacing and positions.
         float blockWidth = blockPrefab.GetComponent<Renderer>().bounds.size.x;
         float gapSize = ((backgroundRenderer.bounds.size.x - (blockWidth * numberOfBlocks)) / (numberOfBlocks + 1));
-        spawnPosition.x += gapSize;
+
+        // Position the first block away from the border.
+        spawnPosition.x += gapSize + (blockWidth * 0.5f);
+
         for (int i = 0; i < numberOfBlocks; ++i)
         {
             // Adjust the spawn position based on which block is being spawned in the line.
@@ -41,6 +45,8 @@ public class BlockManager : MonoBehaviour
 
             Instantiate(blockPrefab, position, Quaternion.identity);
         }
+
+        // Reset the x spawn coordinate for the next time the function is called.
         spawnPosition.x -= gapSize;
     }
 }
