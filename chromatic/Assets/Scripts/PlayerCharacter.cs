@@ -9,6 +9,8 @@ public class PlayerCharacter : MonoBehaviour
     //public float jumpForce = 100.0f;            // The amount of force exterted upwards when the player jumps.
 
     private Rigidbody2D rb;                     // The player's rigidbody component.
+    private bool movePlayer = false;            // Signals for FixedUpdate to move the player.
+    private float moveDirection = 0;            // Positive = right, negative = left.
     //private bool applyJumpForce = false;        // Informs fixed update if jump force should be added.
 
     /* Use this for initialization. */
@@ -22,7 +24,8 @@ public class PlayerCharacter : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
         {
-            Movement();
+            moveDirection = Input.GetAxis("Horizontal");
+            movePlayer = true;
         }
         //if (Input.GetKeyDown(KeyCode.Space))
         //{
@@ -33,6 +36,11 @@ public class PlayerCharacter : MonoBehaviour
     /* FixedUpdate is called once per physics tick. */
     private void FixedUpdate()
     {
+        if (movePlayer)
+        {
+            movePlayer = false;
+            Movement();
+        }
         // Applies jumping force to the player.
         //if (applyJumpForce)
         //{
@@ -59,15 +67,10 @@ public class PlayerCharacter : MonoBehaviour
     /* Player movement. */
     private void Movement()
     {
-        float direction = Input.GetAxis("Horizontal");
-        if (direction > 0)
+        if (moveDirection > 0)
             rb.MovePosition(transform.position + transform.right * movementSpeed * Time.deltaTime);
-        else if (direction < 0)
+        else if (moveDirection < 0)
             rb.MovePosition(transform.position + -transform.right * movementSpeed * Time.deltaTime);
-
-        //Vector3 movement = Vector3.zero;
-        //movement.x = Input.GetAxis("Horizontal");
-        //transform.position += movement * movementSpeed * Time.deltaTime;
     }
 
     /* Indicates that the player should jump to FixedUpdate. */
