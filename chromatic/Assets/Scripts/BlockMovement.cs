@@ -14,8 +14,8 @@ public class BlockMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    /* Update is called once per frame. */
-    void Update()
+    /* FixedUpdate is called once per physics tick. */
+    void FixedUpdate()
     {
         rb.MovePosition(transform.position + Vector3.up * movementSpeed * Time.deltaTime);
     }

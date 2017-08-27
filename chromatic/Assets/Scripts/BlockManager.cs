@@ -5,6 +5,7 @@ using UnityEngine;
 public class BlockManager : MonoBehaviour
 {
     public GameObject blockPrefab;          // The block that will make up each line.
+    public GameObject colorManager;         // The color manager in the scene.
     public Renderer backgroundRenderer;     // The background's renderer component - used for block spacing and start position.
     public int numberOfBlocks = 5;          // The number of blocks each line is made up of.
 
@@ -16,6 +17,9 @@ public class BlockManager : MonoBehaviour
     /* Use this for initialization. */
     private void Start()
     {
+        // Grab the color manager if it is not assigned in the editor.
+        if (!colorManager) { colorManager = GameObject.Find("ColorManager"); }
+
         blocks = new GameObject[numberOfBlocks];
 
         // X screen position for the bottom left of the background element.
@@ -47,6 +51,9 @@ public class BlockManager : MonoBehaviour
         // Position the first block away from the border.
         spawnPosition.x += gapSize + (blockWidth * 0.5f);
 
+        // Grab the colors for the blocks.
+        List<Color> availableColors = new List<Color>(colorManager.GetComponent<ColorManager>().GetColors());
+
         if (!blocks[0])
         {
             // First time spawning the blocks.
@@ -56,7 +63,13 @@ public class BlockManager : MonoBehaviour
                 Vector3 position = spawnPosition;
                 position.x += (i * blockWidth) + (i * gapSize);
 
+                // Get a valid color for the block and remove it from the available list.
+                Color blockColor = availableColors[Random.Range(0, availableColors.Count - 1)];
+                availableColors.Remove(blockColor);
+
+                // Create the block.
                 GameObject newBlock = Instantiate(blockPrefab, position, Quaternion.identity);
+                newBlock.GetComponent<SpriteRenderer>().color = blockColor;
                 blocks[i] = newBlock;
             }
         }
@@ -71,6 +84,12 @@ public class BlockManager : MonoBehaviour
                 position.x += (i * blockWidth) + (i * gapSize);
                 blocks[i].transform.position = position;
                 blocks[i].transform.rotation = Quaternion.identity;
+
+                // Get a valid color for the block and remove it from the available list.
+                Color blockColor = availableColors[Random.Range(0, availableColors.Count - 1)];
+                availableColors.Remove(blockColor);
+
+                blocks[i].GetComponent<SpriteRenderer>().color = blockColor;
             }
 
             // Renabled the block's movement.

@@ -17,4 +17,10 @@ public class ColorManager : MonoBehaviour
 	{
 		
 	}
+
+    /* Color array access for external scripts. */
+    public Color[] GetColors()
+    {
+        return colors;
+    }
 }
