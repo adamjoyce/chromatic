@@ -5,37 +5,82 @@ using UnityEngine;
 public class BlockManager : MonoBehaviour
 {
     public GameObject blockPrefab;          // The block that will make up each line.
-    public GameObject background;           // The background used to determine spacing between blocks in the line.
-    public GameObject spawnPosition;        // The starting spawn location for the line of blocks.
+    public Renderer backgroundRenderer;     // The background's renderer component - used for block spacing and start position.
     public int numberOfBlocks = 5;          // The number of blocks each line is made up of.
 
     private GameObject[] blocks;            // The array of blocks.
+    private Vector3 spawnPosition;          // The starting spawn location for the line of blocks.
+    private float despawnHeight;            // The height at which the block line is off the screen and can be recycled.
+    private int enabledBlockIndex = 0;      // The index of a block in the line that is currently enabled, i.e. not the background colour.
 
     /* Use this for initialization. */
-    void Start()
+    private void Start()
     {
         blocks = new GameObject[numberOfBlocks];
+
+        // X screen position for the bottom left of the background element.
+        float backgroundExtentX = Camera.main.WorldToScreenPoint(new Vector3(backgroundRenderer.bounds.min.x, 0, 0)).x;
+        spawnPosition = Camera.main.ScreenToWorldPoint(new Vector3(backgroundExtentX, -1, 10));
+        spawnPosition.y -= blockPrefab.GetComponent<Renderer>().bounds.size.y * 0.5f;
+
+        despawnHeight = backgroundRenderer.bounds.size.y * 0.5f;
+
         SpawnBlocks();
     }
 
-    /* Update is called once per frame. */
-    void Update()
+    /* Use this for initilization. */
+    private void Update()
     {
-
+        if (blocks[enabledBlockIndex].transform.position.y >= (despawnHeight * 0.5f))
+        {
+            SpawnBlocks();
+        }
     }
 
     /* Spawns a line of blocks. */
     private void SpawnBlocks()
     {
-        float blockSizeX = blockPrefab.GetComponent<Renderer>().bounds.size.x;
-        float gapSize = ((background.GetComponent<Renderer>().bounds.size.x - (blockSizeX * numberOfBlocks)) / numberOfBlocks);
-        for (int i = 0; i < numberOfBlocks; ++i)
-        {
-            // Adjust the spawn position based on which block is being spawned in the line.
-            Vector3 position = spawnPosition.transform.position;
-            position.x += (i * blockSizeX) + (i * gapSize);
+        // Calculate the values needed for the block spacing and positions.
+        float blockWidth = blockPrefab.GetComponent<Renderer>().bounds.size.x;
+        float gapSize = ((backgroundRenderer.bounds.size.x - (blockWidth * numberOfBlocks)) / (numberOfBlocks + 1));
 
-            Instantiate(blockPrefab, position, Quaternion.identity);
+        // Position the first block away from the border.
+        spawnPosition.x += gapSize + (blockWidth * 0.5f);
+
+        if (!blocks[0])
+        {
+            // First time spawning the blocks.
+            for (int i = 0; i < numberOfBlocks; ++i)
+            {
+                // Adjust the spawn position based on which block is being spawned in the line.
+                Vector3 position = spawnPosition;
+                position.x += (i * blockWidth) + (i * gapSize);
+
+                GameObject newBlock = Instantiate(blockPrefab, position, Quaternion.identity);
+                blocks[i] = newBlock;
+            }
         }
+        else
+        {
+            // Recycle the existing blocks.
+            // Reposition the line.
+            for (int i = 0; i < numberOfBlocks; ++i)
+            {
+                blocks[i].SetActive(false);
+                Vector3 position = spawnPosition;
+                position.x += (i * blockWidth) + (i * gapSize);
+                blocks[i].transform.position = position;
+                blocks[i].transform.rotation = Quaternion.identity;
+            }
+
+            // Renabled the block's movement.
+            for (int i = 0; i < numberOfBlocks; ++i)
+            {
+                blocks[i].SetActive(true);
+            }
+        }
+
+        // Reset the x spawn coordinate for the next time the function is called.
+        spawnPosition.x -= gapSize + (blockWidth * 0.5f);
     }
 }

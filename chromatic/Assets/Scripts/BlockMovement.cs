@@ -6,7 +6,7 @@ public class BlockMovement : MonoBehaviour
 {
     public float movementSpeed = 10.0f;          // How quickly the blocks travel up the screen.
 
-    private Rigidbody2D rb;                      // The 2d rigidbody used for moving the block.
+    private Rigidbody2D rb;                      // The 2d rigidbody used for moving the line of blocks.
 
     /* Use this for initialization. */
     void Start()
