@@ -9,7 +9,6 @@ public class BlockManager : MonoBehaviour
     public int numberOfBlocks = 5;          // The number of blocks each line is made up of.
 
     private GameObject[] blocks;            // The array of blocks.
-    //private GameObject blockLine;           // Parent gameobject to move and reset the line position uniformly.
     private Vector3 spawnPosition;          // The starting spawn location for the line of blocks.
     private float despawnHeight;            // The height at which the block line is off the screen and can be recycled.
     private int enabledBlockIndex = 0;      // The index of a block in the line that is currently enabled, i.e. not the background colour.
@@ -18,13 +17,6 @@ public class BlockManager : MonoBehaviour
     private void Start()
     {
         blocks = new GameObject[numberOfBlocks];
-
-        // Set up the block line component.
-        //blockLine = new GameObject("BlockLine");
-        //blockLine.SetActive(false);
-        //blockLine.AddComponent<Rigidbody2D>();
-        //blockLine.GetComponent<Rigidbody2D>().gravityScale = 0;
-        //blockLine.AddComponent<BlockMovement>();
 
         // X screen position for the bottom left of the background element.
         float backgroundExtentX = Camera.main.WorldToScreenPoint(new Vector3(backgroundRenderer.bounds.min.x, 0, 0)).x;
@@ -52,9 +44,6 @@ public class BlockManager : MonoBehaviour
         float blockWidth = blockPrefab.GetComponent<Renderer>().bounds.size.x;
         float gapSize = ((backgroundRenderer.bounds.size.x - (blockWidth * numberOfBlocks)) / (numberOfBlocks + 1));
 
-        // Set the line parent object to be at the same height as the blocks.
-        //blockLine.transform.position = spawnPosition;
-
         // Position the first block away from the border.
         spawnPosition.x += gapSize + (blockWidth * 0.5f);
 
@@ -68,7 +57,6 @@ public class BlockManager : MonoBehaviour
                 position.x += (i * blockWidth) + (i * gapSize);
 
                 GameObject newBlock = Instantiate(blockPrefab, position, Quaternion.identity);
-                //newBlock.transform.SetParent(blockLine.transform);
                 blocks[i] = newBlock;
             }
         }
@@ -94,7 +82,5 @@ public class BlockManager : MonoBehaviour
 
         // Reset the x spawn coordinate for the next time the function is called.
         spawnPosition.x -= gapSize + (blockWidth * 0.5f);
-
-        //blockLine.SetActive(true);
     }
 }
