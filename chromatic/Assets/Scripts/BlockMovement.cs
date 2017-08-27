@@ -17,6 +17,6 @@ public class BlockMovement : MonoBehaviour
     /* FixedUpdate is called once per physics tick. */
     void FixedUpdate()
     {
-        rb.MovePosition(transform.position + Vector3.up * movementSpeed * Time.deltaTime);
+        rb.MovePosition(transform.position + Vector3.up * movementSpeed * Time.fixedDeltaTime);
     }
 }

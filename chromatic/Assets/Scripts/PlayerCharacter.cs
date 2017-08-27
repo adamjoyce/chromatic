@@ -40,17 +40,20 @@ public class PlayerCharacter : MonoBehaviour
     private void Movement()
     {
         if (moveDirection > 0)
-            rb.MovePosition(transform.position + transform.right * movementSpeed * Time.deltaTime);
+            rb.MovePosition(transform.position + transform.right * movementSpeed * Time.fixedDeltaTime);
         else if (moveDirection < 0)
-            rb.MovePosition(transform.position + -transform.right * movementSpeed * Time.deltaTime);
+            rb.MovePosition(transform.position + -transform.right * movementSpeed * Time.fixedDeltaTime);
     }
 
     /* Behaviour for when a collision occurs. */
-    private void OnCollisionEnter2d(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log("Collide");
         if (collision.gameObject.tag == "Block")
         {
             // Slow game time and end game.
+            Time.timeScale = 1f / 10f;
+            Time.fixedDeltaTime = Time.fixedDeltaTime / 10f;
         }
     }
 }

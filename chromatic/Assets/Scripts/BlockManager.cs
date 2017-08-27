@@ -112,7 +112,6 @@ public class BlockManager : MonoBehaviour
             }
         }
 
-        Debug.Log(enabledBlockIndex);
         // Reset the x spawn coordinate for the next time the function is called.
         spawnPosition.x -= gapSize + (blockWidth * 0.5f);
     }
