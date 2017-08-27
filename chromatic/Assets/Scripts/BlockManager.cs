@@ -64,13 +64,23 @@ public class BlockManager : MonoBehaviour
                 position.x += (i * blockWidth) + (i * gapSize);
 
                 // Get a valid color for the block and remove it from the available list.
-                Color blockColor = availableColors[Random.Range(0, availableColors.Count - 1)];
-                availableColors.Remove(blockColor);
+                Color blockColor = GetAvailableColor(ref availableColors);
 
                 // Create the block.
                 GameObject newBlock = Instantiate(blockPrefab, position, Quaternion.identity);
                 newBlock.GetComponent<SpriteRenderer>().color = blockColor;
                 blocks[i] = newBlock;
+
+                // Disable the block if it matches the background color.
+                if (CheckColorAgainstBackground(blockColor))
+                {
+                    blocks[i].SetActive(false);
+                    if (i == enabledBlockIndex)
+                    {
+                        // Adjusts the reference block for recycling the block line.
+                        IncrementValue(ref enabledBlockIndex, numberOfBlocks - 1);
+                    }
+                }
             }
         }
         else
@@ -86,20 +96,55 @@ public class BlockManager : MonoBehaviour
                 blocks[i].transform.rotation = Quaternion.identity;
 
                 // Get a valid color for the block and remove it from the available list.
-                Color blockColor = availableColors[Random.Range(0, availableColors.Count - 1)];
-                availableColors.Remove(blockColor);
-
+                Color blockColor = GetAvailableColor(ref availableColors);
                 blocks[i].GetComponent<SpriteRenderer>().color = blockColor;
-            }
 
-            // Renabled the block's movement.
-            for (int i = 0; i < numberOfBlocks; ++i)
-            {
-                blocks[i].SetActive(true);
+                // Renable the block if it doesn't match the current background color.
+                if (!CheckColorAgainstBackground(blockColor))
+                {
+                    blocks[i].SetActive(true);
+                }
+                else if (i == enabledBlockIndex)
+                {
+                    // Adjusts the reference block for recycling the block line.
+                    IncrementValue(ref enabledBlockIndex, numberOfBlocks - 1);
+                }
             }
         }
 
+        Debug.Log(enabledBlockIndex);
         // Reset the x spawn coordinate for the next time the function is called.
         spawnPosition.x -= gapSize + (blockWidth * 0.5f);
+    }
+
+    /* Returns a valid color from a list of available colors and updates the list. */
+    private Color GetAvailableColor(ref List<Color> colors)
+    {
+        Color color = colors[Random.Range(0, colors.Count)];
+        colors.Remove(color);
+        return color;
+    }
+
+    /* Returns true is the given color matches the background color. */
+    private bool CheckColorAgainstBackground(Color blockColor)
+    {
+        if (blockColor == backgroundRenderer.material.color)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /* Increments the given value accounting for wrap around. */
+    private void IncrementValue(ref int value, int maxValue)
+    {
+        if (value == maxValue)
+        {
+            value = 0;
+        }
+        else
+        {
+            value++;
+        }
     }
 }
