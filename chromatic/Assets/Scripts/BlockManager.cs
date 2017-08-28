@@ -41,6 +41,27 @@ public class BlockManager : MonoBehaviour
         }
     }
 
+    /* Updates the current visible blocks dependent on background color. */
+    public void UpdateBlockVisibility(Color backgroundColor)
+    {
+        Color blockColor = new Color();
+        for (int i = 0; i < numberOfBlocks; ++i)
+        {
+            blockColor = blocks[i].GetComponent<SpriteRenderer>().color;
+            if (CheckColorAgainstBackground(blockColor))
+            {
+                DisableBlock(i);
+            }
+            else if (!blocks[i].activeInHierarchy)
+            {
+                // Renable the block and set it to be inline with the rest.
+                Vector3 newPosition = blocks[enabledBlockIndex].transform.position;
+                blocks[i].transform.position = new Vector3(blocks[i].transform.position.x, newPosition.y, 0);
+                blocks[i].SetActive(true);
+            }
+        }
+    }
+
     /* Spawns a line of blocks. */
     private void SpawnBlocks()
     {
@@ -74,12 +95,7 @@ public class BlockManager : MonoBehaviour
                 // Disable the block if it matches the background color.
                 if (CheckColorAgainstBackground(blockColor))
                 {
-                    blocks[i].SetActive(false);
-                    if (i == enabledBlockIndex)
-                    {
-                        // Adjusts the reference block for recycling the block line.
-                        IncrementValue(ref enabledBlockIndex, numberOfBlocks - 1);
-                    }
+                    DisableBlock(i);
                 }
             }
         }
@@ -103,6 +119,8 @@ public class BlockManager : MonoBehaviour
                 if (!CheckColorAgainstBackground(blockColor))
                 {
                     blocks[i].SetActive(true);
+                    //blocks[i].GetComponent<Renderer>().enabled = true;
+                    //blocks[i].GetComponent<BoxCollider2D>().enabled = true;
                 }
                 else if (i == enabledBlockIndex)
                 {
@@ -122,6 +140,17 @@ public class BlockManager : MonoBehaviour
         Color color = colors[Random.Range(0, colors.Count)];
         colors.Remove(color);
         return color;
+    }
+
+    /* Disables the given block and updates the block enabled index if necessary. */
+    private void DisableBlock(int blockIndex)
+    {
+        blocks[blockIndex].SetActive(false);
+        if (blockIndex == enabledBlockIndex)
+        {
+            // Adjusts the reference block for recycling the block line.
+            IncrementValue(ref enabledBlockIndex, numberOfBlocks - 1);
+        }
     }
 
     /* Returns true is the given color matches the background color. */
