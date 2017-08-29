@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class PlayerCharacter : MonoBehaviour
 {
-    public GameObject colorManager;             // The scene's color manager used for changing the background color.
-    public GameObject blockManager;             // The scene's block manager used for adjusting block colors when the background color changes.
-    public float movementSpeed = 5.0f;          // The speed at which the plyer moves.
+    public GameObject colorManager;                 // The scene's color manager used for changing the background color.
+    public GameObject blockManager;                 // The scene's block manager used for adjusting block colors when the background color changes.
+    public float movementSpeed = 5.0f;              // The speed at which the plyer moves.
 
-    private Rigidbody2D rb;                     // The player's rigidbody component.
-    private bool movePlayer = false;            // Signals for FixedUpdate to move the player.
-    private float moveDirection = 0;            // Positive = right, negative = left.
+    private Rigidbody2D rb;                         // The player's rigidbody component.
+    private bool movePlayer = false;                // Signals for FixedUpdate to move the player.
+    private bool updateBlockVisibility = false;     // Signals for FixedUpdate a background color change has occured and the blocks need updating.
+    private float moveDirection = 0;                // Positive = right, negative = left.
 
     /* Use this for initialization. */
     private void Start()

@@ -150,6 +150,12 @@ public class BlockManager : MonoBehaviour
         {
             // Adjusts the reference block for recycling the block line.
             IncrementValue(ref enabledBlockIndex, numberOfBlocks - 1);
+
+            // Check that the new enabled block reference isn't also disabled.
+            while (!blocks[enabledBlockIndex].activeInHierarchy)
+            {
+                IncrementValue(ref enabledBlockIndex, numberOfBlocks - 1);
+            }
         }
     }
 
