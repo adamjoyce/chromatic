@@ -9,14 +9,26 @@ public class BlockMovement : MonoBehaviour
     private Rigidbody2D rb;                      // The 2d rigidbody used for moving the line of blocks.
 
     /* Use this for initialization. */
-    void Start()
+    private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
-    /* Update is called once per frame. */
-    void Update()
+    /* FixedUpdate is called once per physics tick. */
+    private void FixedUpdate()
     {
-        rb.MovePosition(transform.position + Vector3.up * movementSpeed * Time.deltaTime);
+        rb.MovePosition(transform.position + Vector3.up * movementSpeed * Time.fixedDeltaTime);
+    }
+
+    /* Returns the block's current movement speed. */
+    public float GetMovementSpeed()
+    {
+        return movementSpeed;
+    }
+
+    /* Sets the block's movement speed. */
+    public void SetMovementSpeed(float speed)
+    {
+        movementSpeed = speed;
     }
 }
