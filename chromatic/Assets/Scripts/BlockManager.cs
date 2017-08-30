@@ -41,6 +41,12 @@ public class BlockManager : MonoBehaviour
         }
     }
 
+    /* Slows the blocks movement speed - used directly after background color change to allow for player adjustment. */
+    public void ApplyAdjustmentWindow()
+    {
+        StartCoroutine(SlowBlocks());
+    }
+
     /* Updates the current visible blocks dependent on background color. */
     public void UpdateBlockVisibility(Color backgroundColor)
     {
@@ -179,6 +185,25 @@ public class BlockManager : MonoBehaviour
         else
         {
             value++;
+        }
+    }
+
+    /* Slows the blocks for a short time. */
+    private IEnumerator SlowBlocks()
+    {
+        // Slows the blocks movement.
+        float startingMovementSpeed = blocks[0].GetComponent<BlockMovement>().GetMovementSpeed();
+        for (int i = 0; i < numberOfBlocks; ++i)
+        {
+            blocks[i].GetComponent<BlockMovement>().SetMovementSpeed(startingMovementSpeed * 0.5f);
+        }
+
+        yield return new WaitForSeconds(0.5f);
+
+        // Returns the blocks movement to normal speed.
+        for (int i = 0; i < numberOfBlocks; ++i)
+        {
+            blocks[i].GetComponent<BlockMovement>().SetMovementSpeed(startingMovementSpeed);
         }
     }
 }

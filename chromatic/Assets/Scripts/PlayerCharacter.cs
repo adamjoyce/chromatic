@@ -35,7 +35,12 @@ public class PlayerCharacter : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Color backgroundColor = colorManager.GetComponent<ColorManager>().ChangeBackgroundColor();
-            blockManager.GetComponent<BlockManager>().UpdateBlockVisibility(backgroundColor);
+
+            BlockManager blockManagerScript = blockManager.GetComponent<BlockManager>();
+            blockManagerScript.UpdateBlockVisibility(backgroundColor);
+
+            // Slow down time to allow for adjustments.
+            blockManagerScript.ApplyAdjustmentWindow();
         }
     }
 
