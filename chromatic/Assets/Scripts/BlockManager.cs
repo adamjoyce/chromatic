@@ -13,6 +13,7 @@ public class BlockManager : MonoBehaviour
     private Vector3 spawnPosition;          // The starting spawn location for the line of blocks.
     private float despawnHeight;            // The height at which the block line is off the screen and can be recycled.
     private int enabledBlockIndex = 0;      // The index of a block in the line that is currently enabled, i.e. not the background colour.
+    private bool solidLine = false;         // Indicates if there is no block matching the background color thus creating a solid line.
 
     /* Use this for initialization. */
     private void Start()
@@ -68,6 +69,12 @@ public class BlockManager : MonoBehaviour
         }
     }
 
+    /* Returns true if there are no gaps in the block line. */
+    public bool GetSolidLine()
+    {
+        return solidLine;
+    }
+
     /* Spawns a line of blocks. */
     private void SpawnBlocks()
     {
@@ -80,6 +87,9 @@ public class BlockManager : MonoBehaviour
 
         // Grab the colors for the blocks.
         List<Color> availableColors = new List<Color>(colorManager.GetComponent<ColorManager>().GetColors());
+
+        // Assume a solid line.
+        solidLine = true;
 
         if (!blocks[0])
         {
@@ -102,6 +112,7 @@ public class BlockManager : MonoBehaviour
                 if (CheckColorAgainstBackground(blockColor))
                 {
                     DisableBlock(i);
+                    solidLine = false;
                 }
             }
         }
@@ -125,13 +136,16 @@ public class BlockManager : MonoBehaviour
                 if (!CheckColorAgainstBackground(blockColor))
                 {
                     blocks[i].SetActive(true);
-                    //blocks[i].GetComponent<Renderer>().enabled = true;
-                    //blocks[i].GetComponent<BoxCollider2D>().enabled = true;
                 }
                 else if (i == enabledBlockIndex)
                 {
                     // Adjusts the reference block for recycling the block line.
                     IncrementValue(ref enabledBlockIndex, numberOfBlocks - 1);
+                    solidLine = false;
+                }
+                else
+                {
+                    solidLine = false;
                 }
             }
         }
@@ -198,7 +212,7 @@ public class BlockManager : MonoBehaviour
             blocks[i].GetComponent<BlockMovement>().SetMovementSpeed(startingMovementSpeed * 0.5f);
         }
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.0f);
 
         // Returns the blocks movement to normal speed.
         for (int i = 0; i < numberOfBlocks; ++i)

@@ -11,6 +11,7 @@ public class PlayerCharacter : MonoBehaviour
     private Rigidbody2D rb;                         // The player's rigidbody component.
     private bool movePlayer = false;                // Signals for FixedUpdate to move the player.
     private bool updateBlockVisibility = false;     // Signals for FixedUpdate a background color change has occured and the blocks need updating.
+    private bool backgroundChanged = false;         // Indicates that the background color has been changed noce already and shouldn't again before new blocks are spawned.
     private float moveDirection = 0;                // Positive = right, negative = left.
 
     /* Use this for initialization. */
@@ -32,16 +33,26 @@ public class PlayerCharacter : MonoBehaviour
         }
 
         // Changing background color.
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && blockManager.GetComponent<BlockManager>().GetSolidLine())
         {
-            Color backgroundColor = colorManager.GetComponent<ColorManager>().ChangeBackgroundColor();
+            if (!backgroundChanged)
+            {
+                Color backgroundColor = colorManager.GetComponent<ColorManager>().ChangeBackgroundColor();
 
-            BlockManager blockManagerScript = blockManager.GetComponent<BlockManager>();
-            blockManagerScript.UpdateBlockVisibility(backgroundColor);
+                BlockManager blockManagerScript = blockManager.GetComponent<BlockManager>();
+                blockManagerScript.UpdateBlockVisibility(backgroundColor);
 
-            // Slow down time to allow for adjustments.
-            blockManagerScript.ApplyAdjustmentWindow();
+                // Slow down time to allow for adjustments.
+                blockManagerScript.ApplyAdjustmentWindow();
+
+                backgroundChanged = true;
+            }
         }
+        else if (backgroundChanged && !blockManager.GetComponent<BlockManager>().GetSolidLine())
+        {
+            backgroundChanged = false;
+        }
+        Debug.Log(backgroundChanged);
     }
 
     /* FixedUpdate is called once per physics tick. */
@@ -66,7 +77,6 @@ public class PlayerCharacter : MonoBehaviour
     /* Behaviour for when a collision occurs. */
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("Collide");
         if (collision.gameObject.tag == "Block")
         {
             // Slow game time and end game.
