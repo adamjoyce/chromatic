@@ -175,7 +175,7 @@ public class BlockManager : MonoBehaviour
             IncrementValue(ref enabledBlockIndex, numberOfBlocks - 1);
 
             // Check that the new enabled block reference isn't also disabled.
-            while (!blocks[enabledBlockIndex].activeInHierarchy)
+            while (blocks[enabledBlockIndex] && !blocks[enabledBlockIndex].activeInHierarchy)
             {
                 IncrementValue(ref enabledBlockIndex, numberOfBlocks - 1);
             }

@@ -11,6 +11,7 @@ public class PlayerCharacter : MonoBehaviour
     private Rigidbody2D rb;                         // The player's rigidbody component.
     private bool movePlayer = false;                // Signals for FixedUpdate to move the player.
     private bool updateBlockVisibility = false;     // Signals for FixedUpdate a background color change has occured and the blocks need updating.
+    private bool backgroundTimedOut = false;        // Indicates whether a background color change has been attempted recently.
     private float moveDirection = 0;                // Positive = right, negative = left.
 
     /* Use this for initialization. */
@@ -32,9 +33,12 @@ public class PlayerCharacter : MonoBehaviour
         }
 
         // Changing background color.
-        if (Input.GetKeyDown(KeyCode.Space) && blockManager.GetSolidLine())
+        if (!backgroundTimedOut && Input.GetKeyDown(KeyCode.Space))
         {
-            if (!colorManager.GetBackgroundChanged())
+            // Begin timeout to stop player continuously spamming background change.
+            StartCoroutine(BackgroundTimeOut());
+
+            if (blockManager.GetSolidLine() && !colorManager.GetBackgroundChanged())
             {
                 Color backgroundColor = colorManager.ChangeBackgroundColor();
                 blockManager.UpdateBlockVisibility(backgroundColor);
@@ -45,6 +49,7 @@ public class PlayerCharacter : MonoBehaviour
                 colorManager.SetBackgroundChanged(true);
             }
         }
+        Debug.Log(backgroundTimedOut);
     }
 
     /* FixedUpdate is called once per physics tick. */
@@ -64,6 +69,14 @@ public class PlayerCharacter : MonoBehaviour
             rb.MovePosition(transform.position + transform.right * movementSpeed * Time.fixedDeltaTime);
         else if (moveDirection < 0)
             rb.MovePosition(transform.position + -transform.right * movementSpeed * Time.fixedDeltaTime);
+    }
+
+    /* Forces the player to wait before being able to attempt another background color change. */
+    private IEnumerator BackgroundTimeOut()
+    {
+        backgroundTimedOut = true;
+        yield return new WaitForSeconds(2.0f);
+        backgroundTimedOut = false;
     }
 
     /* Behaviour for when a collision occurs. */
