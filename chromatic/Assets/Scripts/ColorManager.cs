@@ -4,19 +4,15 @@ using UnityEngine;
 
 public class ColorManager : MonoBehaviour 
 {
-    public Color[] colors;              // The list of colors the blocks or background can take.
-    public GameObject background;       // The scene background for changing the background color.
+    public Color[] colors;                      // The list of colors the blocks or background can take.
+    public GameObject background;               // The scene background for changing the background color.
 
-	/* Use this for initialization. */
-	private void Start() 
+    private bool backgroundChanged = false;     // Indicates the background has changed once already this line of blocks.
+
+    /* Use this for initialization. */
+    private void Start() 
 	{
         if (!background) { background = GameObject.Find("Background"); }
-	}
-	
-	/* Update is called once per frame. */
-	private void Update() 
-	{
-		
 	}
 
     /* Color array access for external scripts. */
@@ -39,5 +35,17 @@ public class ColorManager : MonoBehaviour
         Camera.main.backgroundColor = newColor * 0.5f;
 
         return newColor;
+    }
+
+    /* Returns if the background has been changed this block line. */
+    public bool GetBackgroundChanged()
+    {
+        return backgroundChanged;
+    }
+
+    /* Sets if the background has been changed this block line. */
+    public void SetBackgroundChanged(bool changed)
+    {
+        backgroundChanged = changed;
     }
 }
