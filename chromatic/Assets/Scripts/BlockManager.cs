@@ -79,7 +79,6 @@ public class BlockManager : MonoBehaviour
         {
             BlockMovement blockMovementScript = blocks[i].GetComponent<BlockMovement>();
             blockMovementScript.SetMovementSpeed(blockMovementScript.GetMovementSpeed() * speedMultiplier);
-            //Debug.Log(blockMovementScript.GetMovementSpeed());
         }
     }
 

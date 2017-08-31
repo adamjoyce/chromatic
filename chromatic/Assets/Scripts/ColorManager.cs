@@ -7,7 +7,7 @@ public class ColorManager : MonoBehaviour
     public Color[] colors;                      // The list of colors the blocks or background can take.
     public GameObject background;               // The scene background for changing the background color.
 
-    private bool backgroundChanged = false;     // Indicates the background has changed once already this line of blocks.
+    private bool backgroundChanged = false;     // Indicates the background has changed once already this block line.
 
     /* Use this for initialization. */
     private void Start() 

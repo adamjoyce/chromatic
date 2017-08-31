@@ -20,13 +20,18 @@ public class GameManager : MonoBehaviour
 	/* Update is called once per frame. */
 	private void Update() 
 	{
-        Debug.Log(difficultyIncremented);
 		if (!difficultyIncremented && (lineScore % lineDifficultyIncrement) == 0)
         {
             difficultyIncremented = true;
-            blockManager.UpdateLinesMovementSpeed(difficultyMultiplier);
+            IncreaseDifficulty();
         }
 	}
+
+    /* Increases the difficulty by the difficulty multiplier. */
+    public void IncreaseDifficulty()
+    {
+        blockManager.UpdateLinesMovementSpeed(difficultyMultiplier);
+    }
 
     /* Get the current line score. */
     public int GetLineScore()

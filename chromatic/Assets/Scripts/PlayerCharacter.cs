@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class PlayerCharacter : MonoBehaviour
 {
+    public GameManager gameManager;                 // The scene's game manager script used for managing the game's difficulty.
     public ColorManager colorManager;               // The scene's color manager script used for changing the background color.
     public BlockManager blockManager;               // The scene's block manager script used for adjusting block colors when the background color changes.
     public float movementSpeed = 5.0f;              // The speed at which the plyer moves.
 
     private Rigidbody2D rb;                         // The player's rigidbody component.
     private bool movePlayer = false;                // Signals for FixedUpdate to move the player.
-    private bool updateBlockVisibility = false;     // Signals for FixedUpdate a background color change has occured and the blocks need updating.
-    private bool backgroundTimedOut = false;        // Indicates whether a background color change has been attempted recently.
     private float moveDirection = 0;                // Positive = right, negative = left.
 
     /* Use this for initialization. */
     private void Start()
     {
+        if (!gameManager) { gameManager = GameObject.Find("GameManager").GetComponent<GameManager>(); }
         if (!colorManager) { colorManager = GameObject.Find("ColorManager").GetComponent<ColorManager>(); }
         if (!blockManager) { blockManager = GameObject.Find("BlockManager").GetComponent<BlockManager>(); }
         rb = GetComponent<Rigidbody2D>();
@@ -33,11 +33,8 @@ public class PlayerCharacter : MonoBehaviour
         }
 
         // Changing background color.
-        if (!backgroundTimedOut && Input.GetKeyDown(KeyCode.Space))
+        if (!colorManager.GetBackgroundChanged() && Input.GetKeyDown(KeyCode.Space))
         {
-            // Begin timeout to stop player continuously spamming background change.
-            StartCoroutine(BackgroundTimeOut());
-
             if (blockManager.GetSolidLine() && !colorManager.GetBackgroundChanged())
             {
                 Color backgroundColor = colorManager.ChangeBackgroundColor();
@@ -46,7 +43,13 @@ public class PlayerCharacter : MonoBehaviour
                 // Slow down time to allow for adjustments.
                 blockManager.ApplyAdjustmentWindow();
 
+                // Avoid cycling colors more than once per block line.
                 colorManager.SetBackgroundChanged(true);
+            }
+            else
+            {
+                // Punish background color change spam by increasing the diffiuclty.
+                gameManager.IncreaseDifficulty();
             }
         }
     }
@@ -68,14 +71,6 @@ public class PlayerCharacter : MonoBehaviour
             rb.MovePosition(transform.position + transform.right * movementSpeed * Time.fixedDeltaTime);
         else if (moveDirection < 0)
             rb.MovePosition(transform.position + -transform.right * movementSpeed * Time.fixedDeltaTime);
-    }
-
-    /* Forces the player to wait before being able to attempt another background color change. */
-    private IEnumerator BackgroundTimeOut()
-    {
-        backgroundTimedOut = true;
-        yield return new WaitForSeconds(2.0f);
-        backgroundTimedOut = false;
     }
 
     /* Behaviour for when a collision occurs. */
