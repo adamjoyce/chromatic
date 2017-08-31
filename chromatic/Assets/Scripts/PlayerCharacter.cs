@@ -49,7 +49,6 @@ public class PlayerCharacter : MonoBehaviour
                 colorManager.SetBackgroundChanged(true);
             }
         }
-        Debug.Log(backgroundTimedOut);
     }
 
     /* FixedUpdate is called once per physics tick. */

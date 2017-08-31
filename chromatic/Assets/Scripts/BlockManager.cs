@@ -5,6 +5,7 @@ using UnityEngine;
 public class BlockManager : MonoBehaviour
 {
     public GameObject blockPrefab;              // The block that will make up each line.
+    public GameManager gameManager;             // The game manager for updating the current score.
     public ColorManager colorManager;           // The color manager in the scene.
     public Renderer backgroundRenderer;         // The background's renderer component - used for block spacing and start position.
     public int numberOfBlocks = 5;              // The number of blocks each line is made up of.
@@ -18,7 +19,8 @@ public class BlockManager : MonoBehaviour
     /* Use this for initialization. */
     private void Start()
     {
-        // Grab the color manager if it is not assigned in the editor.
+        // Grab the manager scripts if it is not assigned in the editor.
+        if (!gameManager) { gameManager = GameObject.Find("GameManager").GetComponent<GameManager>(); }
         if (!colorManager) { colorManager = GameObject.Find("ColorManager").GetComponent<ColorManager>(); }
 
         blocks = new GameObject[numberOfBlocks];
@@ -39,6 +41,7 @@ public class BlockManager : MonoBehaviour
         if (blocks[enabledBlockIndex].transform.position.y >= (despawnHeight * 0.5f))
         {
             SpawnBlocks();
+            gameManager.SetLineScore(gameManager.GetLineScore() + 1);
         }
     }
 
@@ -66,6 +69,17 @@ public class BlockManager : MonoBehaviour
                 blocks[i].transform.position = new Vector3(blocks[i].transform.position.x, newPosition.y, 0);
                 blocks[i].SetActive(true);
             }
+        }
+    }
+
+    /* Updates the block lines' movement speed. */
+    public void UpdateLinesMovementSpeed(float speedMultiplier)
+    {
+        for (int i = 0; i < numberOfBlocks; ++i)
+        {
+            BlockMovement blockMovementScript = blocks[i].GetComponent<BlockMovement>();
+            blockMovementScript.SetMovementSpeed(blockMovementScript.GetMovementSpeed() * speedMultiplier);
+            //Debug.Log(blockMovementScript.GetMovementSpeed());
         }
     }
 
@@ -153,8 +167,17 @@ public class BlockManager : MonoBehaviour
         // Reset the x spawn coordinate for the next time the function is called.
         spawnPosition.x -= gapSize + (blockWidth * 0.5f);
 
-        // Set it so that it is possible for the background color to change again.
-        colorManager.SetBackgroundChanged(false);
+        if (colorManager.GetBackgroundChanged())
+        {
+            // Set it so that it is possible for the background color to change again.
+            colorManager.SetBackgroundChanged(false);
+        }
+
+        if (gameManager.GetDifficultyIncremented())
+        {
+            // Set is so that the difficulty can be increased after the next set of lines.
+            gameManager.SetDifficultyIncremented(false);
+        }
     }
 
     /* Returns a valid color from a list of available colors and updates the list. */
