@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public Color difficultyImageColor = Color.white;        // The color of the difficulty image.
     public float flashSpeed = 5.0f;                         // The speed at which the difficulty image will fade.
 
-    private int lineScore = 1;                              // The number of block lines the player has successfully traversed.
+    private int lineScore = 0;                              // The number of block lines the player has successfully traversed.
     private bool difficultyIncremented = false;             // True if the difficult has been increased for the current block line.
 
 	/* Use this for initialization. */
