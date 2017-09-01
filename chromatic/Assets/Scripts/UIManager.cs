@@ -6,7 +6,10 @@ public class UIManager : MonoBehaviour
     public Transform player;                    // The player's transform for the player height.
     public Renderer backgroundRenderer;         // The background renderer for the min and max bound positions.
     public Text playText;                       // The play text UI element.
-    public Text quitText;                       // The quit text UI element.              
+    public Text quitText;                       // The quit text UI element.
+    
+    private bool leftOptionSelected = false;    // True if the player touches the left wall selection.
+    private bool rightOptionSelected = false;   // True if the player touches the right wall selection.
 
 	/* Use this for initialization. */
 	private void Start() 
@@ -23,10 +26,19 @@ public class UIManager : MonoBehaviour
         playText.transform.position = new Vector3(minBackgroundBound.x, playerScreenPosition.y);
         quitText.transform.position = new Vector3(maxBackgroundBound.x, playerScreenPosition.y);
     }
-	
-	/* Update is called once per frame. */
-	private void Update() 
-	{
-		
-	}
+
+    /* Toggles the UI menu. */
+    public void ToggleMenu()
+    {
+        if (playText.gameObject.activeInHierarchy)
+        {
+            playText.gameObject.SetActive(false);
+            quitText.gameObject.SetActive(false);
+        }
+        else
+        {
+            playText.gameObject.SetActive(true);
+            quitText.gameObject.SetActive(true);
+        }
+    }
 }

@@ -31,17 +31,27 @@ public class BlockManager : MonoBehaviour
         spawnPosition.y -= blockPrefab.GetComponent<Renderer>().bounds.size.y * 0.5f;
 
         despawnHeight = backgroundRenderer.bounds.size.y * 0.5f;
-
-        SpawnBlocks();
     }
 
     /* Use this for initilization. */
     private void Update()
     {
-        if (blocks[enabledBlockIndex].transform.position.y >= (despawnHeight * 0.5f))
+        if (gameManager.GetIsPlaying())
         {
-            SpawnBlocks();
-            gameManager.SetLineScore(gameManager.GetLineScore() + 1);
+            if (!blocks[0])
+            {
+                // The game has just begun.
+                SpawnBlocks();
+            }
+            else
+            {
+                // The game is in progress.
+                if (blocks[enabledBlockIndex].transform.position.y >= (despawnHeight * 0.5f))
+                {
+                    SpawnBlocks();
+                    gameManager.SetLineScore(gameManager.GetLineScore() + 1);
+                }
+            }
         }
     }
 

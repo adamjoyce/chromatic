@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 
     private int lineScore = 0;                              // The number of block lines the player has successfully traversed.
     private bool difficultyIncremented = false;             // True if the difficult has been increased for the current block line.
+    private bool isPlaying = false;                         // True when the player begins the game by selecting 'PLAY'.
 
 	/* Use this for initialization. */
 	private void Start() 
@@ -27,17 +28,20 @@ public class GameManager : MonoBehaviour
 	/* Update is called once per frame. */
 	private void Update() 
 	{
-        // Difficulty scaling.
-		if (!difficultyIncremented && (lineScore % lineDifficultyIncrement) == 0)
+        if (isPlaying)
         {
-            difficultyIncremented = true;
-            IncreaseDifficulty();
-        }
+            // Difficulty scaling.
+            if (!difficultyIncremented && (lineScore % lineDifficultyIncrement) == 0)
+            {
+                difficultyIncremented = true;
+                IncreaseDifficulty();
+            }
 
-        // Difficulty UI fading.
-        if (difficultyImage.color != Color.clear)
-        {
-            difficultyImage.color = Color.Lerp(difficultyImage.color, Color.clear, flashSpeed * Time.deltaTime);
+            // Difficulty UI fading.
+            if (difficultyImage.color != Color.clear)
+            {
+                difficultyImage.color = Color.Lerp(difficultyImage.color, Color.clear, flashSpeed * Time.deltaTime);
+            }
         }
 	}
 
@@ -48,7 +52,7 @@ public class GameManager : MonoBehaviour
         difficultyImage.color = difficultyImageColor;
     }
 
-    /* Get the current line score. */
+    /* Return the current line score. */
     public int GetLineScore()
     {
         return lineScore;
@@ -70,5 +74,17 @@ public class GameManager : MonoBehaviour
     public void SetDifficultyIncremented(bool isIncremented)
     {
         difficultyIncremented = isIncremented;
+    }
+
+    /* Return true if the game is currently in progress. */
+    public bool GetIsPlaying()
+    {
+        return isPlaying;
+    }
+
+    /* Sets whether or not the game is in progress. */
+    public void SetIsPlaying(bool playing)
+    {
+        isPlaying = playing;
     }
 }
