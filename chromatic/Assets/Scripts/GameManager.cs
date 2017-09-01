@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
 	/* Use this for initialization. */
 	private void Start() 
 	{
-		if (!blockManager) { blockManager = GameObject.Find("BlockManager").GetComponent<BlockManager>(); }
+		if (!blockManager) { blockManager = FindObjectOfType<BlockManager>(); }
         if (!difficultyImage) { difficultyImage = GameObject.Find("DifficultyFlash").GetComponent<Image>(); }
 
         // Start with a clear screen.

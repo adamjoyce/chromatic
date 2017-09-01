@@ -14,9 +14,9 @@ public class PlayerCharacter : MonoBehaviour
     /* Use this for initialization. */
     private void Start()
     {
-        if (!gameManager) { gameManager = GameObject.Find("GameManager").GetComponent<GameManager>(); }
-        if (!colorManager) { colorManager = GameObject.Find("ColorManager").GetComponent<ColorManager>(); }
-        if (!blockManager) { blockManager = GameObject.Find("BlockManager").GetComponent<BlockManager>(); }
+        if (!gameManager) { gameManager = FindObjectOfType<GameManager>(); }
+        if (!colorManager) { colorManager = FindObjectOfType<ColorManager>(); }
+        if (!blockManager) { blockManager = FindObjectOfType<BlockManager>(); }
         rb = GetComponent<Rigidbody2D>();
     }
 

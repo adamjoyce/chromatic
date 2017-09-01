@@ -20,8 +20,8 @@ public class BlockManager : MonoBehaviour
     private void Start()
     {
         // Grab the manager scripts if it is not assigned in the editor.
-        if (!gameManager) { gameManager = GameObject.Find("GameManager").GetComponent<GameManager>(); }
-        if (!colorManager) { colorManager = GameObject.Find("ColorManager").GetComponent<ColorManager>(); }
+        if (!gameManager) { gameManager = FindObjectOfType<GameManager>(); }
+        if (!colorManager) { colorManager = FindObjectOfType<ColorManager>(); }
 
         blocks = new GameObject[numberOfBlocks];
 
