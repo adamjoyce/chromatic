@@ -9,11 +9,14 @@ public class UIManager : MonoBehaviour
     public Renderer backgroundRenderer;             // The background renderer for the min and max bound positions.
     public Text playText;                           // The play text UI element.
     public Text quitText;                           // The quit text UI element.
+    public Color textOriginalColor = Color.white;   // The original color for a UI text element.
     public Color textFlashColor = Color.black;      // The color a UI text element flashes when selected.
     public float fadeSpeed = 2.0f;                  // The speed at which the UI text element fades.
 
     private bool playSelected = false;              // True when the play menu option is selected.
     private bool quitSelected = false;              // True when the quit menu option is selected.
+
+    private float flashStartTime = 0.0f;            // The game time when the selection flash begins.
 
 	/* Use this for initialization. */
 	private void Start() 
@@ -30,6 +33,10 @@ public class UIManager : MonoBehaviour
         Vector3 maxBackgroundBound = Camera.main.WorldToScreenPoint(backgroundRenderer.bounds.max);
         playText.transform.position = new Vector3(minBackgroundBound.x, playerScreenPosition.y);
         quitText.transform.position = new Vector3(maxBackgroundBound.x, playerScreenPosition.y);
+
+        // Set the text elements starting colors.
+        playText.color = textOriginalColor;
+        quitText.color = textOriginalColor;
     }
 
     /* Update is called once per frame. */
@@ -50,15 +57,15 @@ public class UIManager : MonoBehaviour
                 quitSelected = false;
             }
 
-            // Fade text colors back to white.
+            // Linearly fade text colors back to white.
             if (playText.color != Color.white)
             {
-                playText.color = Color.Lerp(playText.color, Color.white, Time.deltaTime / fadeSpeed);
+                playText.color = Color.Lerp(textFlashColor, textOriginalColor, (Time.time - flashStartTime) / fadeSpeed);
             }
 
             if (quitText.color != Color.white)
             {
-                quitText.color = Color.Lerp(quitText.color, Color.white, Time.deltaTime / fadeSpeed);
+                quitText.color = Color.Lerp(textFlashColor, textOriginalColor, (Time.time - flashStartTime) / fadeSpeed);
             }
         }
     }
@@ -79,6 +86,7 @@ public class UIManager : MonoBehaviour
             quitSelected = true;
             quitText.color = textFlashColor;
         }
+        flashStartTime = Time.time;
     }
 
     /* Animates the given UI text element with a flash. */

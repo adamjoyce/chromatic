@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
             // Difficulty UI fading.
             if (difficultyImage.color != Color.clear)
             {
+                // Fade color back to transparent for flash effect - note fade is pseudo-linear due to dynamic starting point.
                 difficultyImage.color = Color.Lerp(difficultyImage.color, Color.clear, flashSpeed * Time.deltaTime);
             }
         }
