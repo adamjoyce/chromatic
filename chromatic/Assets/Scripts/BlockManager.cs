@@ -4,22 +4,24 @@ using UnityEngine;
 
 public class BlockManager : MonoBehaviour
 {
-    public GameObject blockPrefab;          // The block that will make up each line.
-    public GameObject colorManager;         // The color manager in the scene.
-    public Renderer backgroundRenderer;     // The background's renderer component - used for block spacing and start position.
-    public int numberOfBlocks = 5;          // The number of blocks each line is made up of.
+    public GameObject blockPrefab;              // The block that will make up each line.
+    public GameManager gameManager;             // The game manager for updating the current score.
+    public ColorManager colorManager;           // The color manager in the scene.
+    public Renderer backgroundRenderer;         // The background's renderer component - used for block spacing and start position.
+    public int numberOfBlocks = 5;              // The number of blocks each line is made up of.
 
-    private GameObject[] blocks;            // The array of blocks.
-    private Vector3 spawnPosition;          // The starting spawn location for the line of blocks.
-    private float despawnHeight;            // The height at which the block line is off the screen and can be recycled.
-    private int enabledBlockIndex = 0;      // The index of a block in the line that is currently enabled, i.e. not the background colour.
-    private bool solidLine = false;         // Indicates if there is no block matching the background color thus creating a solid line.
+    private GameObject[] blocks;                // The array of blocks.
+    private Vector3 spawnPosition;              // The starting spawn location for the line of blocks.
+    private float despawnHeight;                // The height at which the block line is off the screen and can be recycled.
+    private int enabledBlockIndex = 0;          // The index of a block in the line that is currently enabled, i.e. not the background colour.
+    private bool solidLine = false;             // Indicates if there is no block matching the background color thus creating a solid line.
 
     /* Use this for initialization. */
     private void Start()
     {
-        // Grab the color manager if it is not assigned in the editor.
-        if (!colorManager) { colorManager = GameObject.Find("ColorManager"); }
+        // Grab the manager scripts if it is not assigned in the editor.
+        if (!gameManager) { gameManager = GameObject.Find("GameManager").GetComponent<GameManager>(); }
+        if (!colorManager) { colorManager = GameObject.Find("ColorManager").GetComponent<ColorManager>(); }
 
         blocks = new GameObject[numberOfBlocks];
 
@@ -39,6 +41,7 @@ public class BlockManager : MonoBehaviour
         if (blocks[enabledBlockIndex].transform.position.y >= (despawnHeight * 0.5f))
         {
             SpawnBlocks();
+            gameManager.SetLineScore(gameManager.GetLineScore() + 1);
         }
     }
 
@@ -69,6 +72,16 @@ public class BlockManager : MonoBehaviour
         }
     }
 
+    /* Updates the block lines' movement speed. */
+    public void UpdateLinesMovementSpeed(float speedMultiplier)
+    {
+        for (int i = 0; i < numberOfBlocks; ++i)
+        {
+            BlockMovement blockMovementScript = blocks[i].GetComponent<BlockMovement>();
+            blockMovementScript.SetMovementSpeed(blockMovementScript.GetMovementSpeed() * speedMultiplier);
+        }
+    }
+
     /* Returns true if there are no gaps in the block line. */
     public bool GetSolidLine()
     {
@@ -86,7 +99,7 @@ public class BlockManager : MonoBehaviour
         spawnPosition.x += gapSize + (blockWidth * 0.5f);
 
         // Grab the colors for the blocks.
-        List<Color> availableColors = new List<Color>(colorManager.GetComponent<ColorManager>().GetColors());
+        List<Color> availableColors = new List<Color>(colorManager.GetColors());
 
         // Assume a solid line.
         solidLine = true;
@@ -152,6 +165,18 @@ public class BlockManager : MonoBehaviour
 
         // Reset the x spawn coordinate for the next time the function is called.
         spawnPosition.x -= gapSize + (blockWidth * 0.5f);
+
+        if (colorManager.GetBackgroundChanged())
+        {
+            // Set it so that it is possible for the background color to change again.
+            colorManager.SetBackgroundChanged(false);
+        }
+
+        if (gameManager.GetDifficultyIncremented())
+        {
+            // Set is so that the difficulty can be increased after the next set of lines.
+            gameManager.SetDifficultyIncremented(false);
+        }
     }
 
     /* Returns a valid color from a list of available colors and updates the list. */
@@ -172,7 +197,7 @@ public class BlockManager : MonoBehaviour
             IncrementValue(ref enabledBlockIndex, numberOfBlocks - 1);
 
             // Check that the new enabled block reference isn't also disabled.
-            while (!blocks[enabledBlockIndex].activeInHierarchy)
+            while (blocks[enabledBlockIndex] && !blocks[enabledBlockIndex].activeInHierarchy)
             {
                 IncrementValue(ref enabledBlockIndex, numberOfBlocks - 1);
             }

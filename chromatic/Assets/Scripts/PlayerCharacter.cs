@@ -4,21 +4,21 @@ using UnityEngine;
 
 public class PlayerCharacter : MonoBehaviour
 {
-    public GameObject colorManager;                 // The scene's color manager used for changing the background color.
-    public GameObject blockManager;                 // The scene's block manager used for adjusting block colors when the background color changes.
+    public GameManager gameManager;                 // The scene's game manager script used for managing the game's difficulty.
+    public ColorManager colorManager;               // The scene's color manager script used for changing the background color.
+    public BlockManager blockManager;               // The scene's block manager script used for adjusting block colors when the background color changes.
     public float movementSpeed = 5.0f;              // The speed at which the plyer moves.
 
     private Rigidbody2D rb;                         // The player's rigidbody component.
     private bool movePlayer = false;                // Signals for FixedUpdate to move the player.
-    private bool updateBlockVisibility = false;     // Signals for FixedUpdate a background color change has occured and the blocks need updating.
-    private bool backgroundChanged = false;         // Indicates that the background color has been changed noce already and shouldn't again before new blocks are spawned.
     private float moveDirection = 0;                // Positive = right, negative = left.
 
     /* Use this for initialization. */
     private void Start()
     {
-        if (!colorManager) { colorManager = GameObject.Find("ColorManager"); }
-        if (!blockManager) { blockManager = GameObject.Find("BlockManager"); }
+        if (!gameManager) { gameManager = GameObject.Find("GameManager").GetComponent<GameManager>(); }
+        if (!colorManager) { colorManager = GameObject.Find("ColorManager").GetComponent<ColorManager>(); }
+        if (!blockManager) { blockManager = GameObject.Find("BlockManager").GetComponent<BlockManager>(); }
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -33,26 +33,25 @@ public class PlayerCharacter : MonoBehaviour
         }
 
         // Changing background color.
-        if (Input.GetKeyDown(KeyCode.Space) && blockManager.GetComponent<BlockManager>().GetSolidLine())
+        if (!colorManager.GetBackgroundChanged() && Input.GetKeyDown(KeyCode.Space))
         {
-            if (!backgroundChanged)
+            if (blockManager.GetSolidLine() && !colorManager.GetBackgroundChanged())
             {
-                Color backgroundColor = colorManager.GetComponent<ColorManager>().ChangeBackgroundColor();
-
-                BlockManager blockManagerScript = blockManager.GetComponent<BlockManager>();
-                blockManagerScript.UpdateBlockVisibility(backgroundColor);
+                Color backgroundColor = colorManager.ChangeBackgroundColor();
+                blockManager.UpdateBlockVisibility(backgroundColor);
 
                 // Slow down time to allow for adjustments.
-                blockManagerScript.ApplyAdjustmentWindow();
+                blockManager.ApplyAdjustmentWindow();
 
-                backgroundChanged = true;
+                // Avoid cycling colors more than once per block line.
+                colorManager.SetBackgroundChanged(true);
+            }
+            else
+            {
+                // Punish background color change spam by increasing the diffiuclty.
+                gameManager.IncreaseDifficulty();
             }
         }
-        else if (backgroundChanged && !blockManager.GetComponent<BlockManager>().GetSolidLine())
-        {
-            backgroundChanged = false;
-        }
-        Debug.Log(backgroundChanged);
     }
 
     /* FixedUpdate is called once per physics tick. */
