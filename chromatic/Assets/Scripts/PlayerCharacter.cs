@@ -88,14 +88,14 @@ public class PlayerCharacter : MonoBehaviour
         // Menu selection.
         if (!gameManager.GetIsPlaying())
         {
-            if (collision.gameObject.name == "WallLeft")
+            string selectedOption = UIManager.DetermineMenuSelection(collision.gameObject);
+            Debug.Log(selectedOption);
+            if (selectedOption == "Play")
             {
                 // Hide the menu and begin the game.
-                UIManager.ToggleMenu();
-                StartCoroutine(WaitThenBeginGame());
+                StartCoroutine(AnimateThenBeginGame(selectedOption));
             }
-
-            if (collision.gameObject.name == "WallRight")
+            else
             {
                 // Quit the game.
                 Application.Quit();
@@ -107,9 +107,12 @@ public class PlayerCharacter : MonoBehaviour
     }
 
     /* Waits for a short period then begins the game. */
-    private IEnumerator WaitThenBeginGame()
+    private IEnumerator AnimateThenBeginGame(string selectedOption)
     {
-        yield return new WaitForSeconds(2.0f);
+        UIManager.AnimateSelection(selectedOption);
+        yield return new WaitUntil(() => UIManager.GetAnimationFinished());
+        UIManager.SetAnimationFinished(false);
+        UIManager.SetMenu(false);
         gameManager.SetIsPlaying(true);
     }
 }
