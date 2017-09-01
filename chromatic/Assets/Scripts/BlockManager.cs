@@ -33,7 +33,7 @@ public class BlockManager : MonoBehaviour
         despawnHeight = backgroundRenderer.bounds.size.y * 0.5f;
     }
 
-    /* Use this for initilization. */
+    /* Update is called once per frame. */
     private void Update()
     {
         if (gameManager.GetIsPlaying())

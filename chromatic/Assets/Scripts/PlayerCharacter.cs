@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerCharacter : MonoBehaviour
 {
@@ -88,31 +87,7 @@ public class PlayerCharacter : MonoBehaviour
         // Menu selection.
         if (!gameManager.GetIsPlaying())
         {
-            string selectedOption = UIManager.DetermineMenuSelection(collision.gameObject);
-            Debug.Log(selectedOption);
-            if (selectedOption == "Play")
-            {
-                // Hide the menu and begin the game.
-                StartCoroutine(AnimateThenBeginGame(selectedOption));
-            }
-            else
-            {
-                // Quit the game.
-                Application.Quit();
-
-                // For debugging in editor.
-                UnityEditor.EditorApplication.isPlaying = false;
-            }
+            UIManager.ActivateMenuOption(collision.gameObject.transform);
         }
-    }
-
-    /* Waits for a short period then begins the game. */
-    private IEnumerator AnimateThenBeginGame(string selectedOption)
-    {
-        UIManager.AnimateSelection(selectedOption);
-        yield return new WaitUntil(() => UIManager.GetAnimationFinished());
-        UIManager.SetAnimationFinished(false);
-        UIManager.SetMenu(false);
-        gameManager.SetIsPlaying(true);
     }
 }

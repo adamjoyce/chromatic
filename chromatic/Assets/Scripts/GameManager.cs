@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
         if (isPlaying)
         {
             // Difficulty scaling.
-            if (!difficultyIncremented && (lineScore % lineDifficultyIncrement) == 0)
+            if (!difficultyIncremented && lineScore != 0 && (lineScore % lineDifficultyIncrement) == 0)
             {
                 difficultyIncremented = true;
                 IncreaseDifficulty();
@@ -86,5 +86,14 @@ public class GameManager : MonoBehaviour
     public void SetIsPlaying(bool playing)
     {
         isPlaying = playing;
+    }
+
+    /* Quits the game / editor. */
+    public void QuitGame()
+    {
+        Application.Quit();
+
+        // Must be commented out when building.
+        UnityEditor.EditorApplication.isPlaying = false;
     }
 }
