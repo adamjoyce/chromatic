@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
     public Renderer backgroundRenderer;             // The background renderer for the min and max bound positions.
     public Text playText;                           // The play text UI element.
     public Text quitText;                           // The quit text UI element.
+    public Text scoreText;                          // The score text UI element.
     public Color textOriginalColor = Color.white;   // The original color for a UI text element.
     public Color textFlashColor = Color.black;      // The color a UI text element flashes when selected.
     public float fadeSpeed = 2.0f;                  // The speed at which the UI text element fades.
@@ -26,17 +27,23 @@ public class UIManager : MonoBehaviour
         if (!backgroundRenderer) { backgroundRenderer = GameObject.Find("Background").GetComponent<Renderer>(); }
         if (!playText) { playText = GameObject.Find("PlayText").GetComponent<Text>(); }
         if (!quitText) { quitText = GameObject.Find("QuitText").GetComponent<Text>(); }
+        if (!scoreText) { scoreText = GameObject.Find("ScoreText").GetComponent<Text>(); }
 
-        // Setup the text element positions.
-        Vector3 playerScreenPosition = Camera.main.WorldToScreenPoint(player.position);
-        Vector3 minBackgroundBound = Camera.main.WorldToScreenPoint(backgroundRenderer.bounds.min);
-        Vector3 maxBackgroundBound = Camera.main.WorldToScreenPoint(backgroundRenderer.bounds.max);
-        playText.transform.position = new Vector3(minBackgroundBound.x, playerScreenPosition.y);
-        quitText.transform.position = new Vector3(maxBackgroundBound.x, playerScreenPosition.y);
+        // Setup the menu text element positions.
+        Vector3 playerScreenPosition = /*Camera.main.WorldToScreenPoint*/(player.position);
+        Vector3 minBackgroundBound = /*Camera.main.WorldToScreenPoint*/(backgroundRenderer.bounds.min);
+        Vector3 maxBackgroundBound = /*Camera.main.WorldToScreenPoint*/(backgroundRenderer.bounds.max);
+        playText.transform.position = new Vector3(minBackgroundBound.x, playerScreenPosition.y, 0);
+        quitText.transform.position = new Vector3(maxBackgroundBound.x, playerScreenPosition.y, 0);
 
-        // Set the text elements starting colors.
+        // Set the menu text elements starting colors.
         playText.color = textOriginalColor;
         quitText.color = textOriginalColor;
+
+        // Set the score text rectangle size to match the background size.
+        float scoreWidth = backgroundRenderer.bounds.size.x;
+        scoreText.rectTransform.sizeDelta = new Vector2(scoreWidth, scoreText.rectTransform.sizeDelta.y);
+        Debug.Log(scoreWidth);
     }
 
     /* Update is called once per frame. */

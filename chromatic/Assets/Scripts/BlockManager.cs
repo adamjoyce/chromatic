@@ -13,6 +13,7 @@ public class BlockManager : MonoBehaviour
     private GameObject[] blocks;                // The array of blocks.
     private Vector3 spawnPosition;              // The starting spawn location for the line of blocks.
     private float despawnHeight;                // The height at which the block line is off the screen and can be recycled.
+    private float startingBlockSpeed;           // The movement speed of the blocks before each slow down from a color change.
     private int enabledBlockIndex = 0;          // The index of a block in the line that is currently enabled, i.e. not the background colour.
     private bool solidLine = false;             // Indicates if there is no block matching the background color thus creating a solid line.
 
@@ -87,8 +88,10 @@ public class BlockManager : MonoBehaviour
     {
         for (int i = 0; i < numberOfBlocks; ++i)
         {
-            BlockMovement blockMovementScript = blocks[i].GetComponent<BlockMovement>();
-            blockMovementScript.SetMovementSpeed(blockMovementScript.GetMovementSpeed() * speedMultiplier);
+            BlockMovement blockMovement = blocks[i].GetComponent<BlockMovement>();
+            float newSpeed = blockMovement.GetMovementSpeed() * speedMultiplier;
+            blockMovement.SetMovementSpeed(newSpeed);
+            startingBlockSpeed = newSpeed;
         }
     }
 
@@ -138,6 +141,9 @@ public class BlockManager : MonoBehaviour
                     solidLine = false;
                 }
             }
+
+            // Records the initial block movement speed for the first colour switch.
+            startingBlockSpeed = blocks[0].GetComponent<BlockMovement>().GetMovementSpeed();
         }
         else
         {
@@ -170,6 +176,9 @@ public class BlockManager : MonoBehaviour
                 {
                     solidLine = false;
                 }
+
+                // Ensure the block's movement speed is reset to avoid blocks spawning slow due to late change changes.
+                blocks[i].GetComponent<BlockMovement>().SetMovementSpeed(startingBlockSpeed);
             }
         }
 
@@ -241,10 +250,10 @@ public class BlockManager : MonoBehaviour
     private IEnumerator SlowBlocks()
     {
         // Slows the blocks movement.
-        float startingMovementSpeed = blocks[0].GetComponent<BlockMovement>().GetMovementSpeed();
+        startingBlockSpeed = blocks[0].GetComponent<BlockMovement>().GetMovementSpeed();
         for (int i = 0; i < numberOfBlocks; ++i)
         {
-            blocks[i].GetComponent<BlockMovement>().SetMovementSpeed(startingMovementSpeed * 0.5f);
+            blocks[i].GetComponent<BlockMovement>().SetMovementSpeed(startingBlockSpeed * 0.5f);
         }
 
         yield return new WaitForSeconds(1.0f);
@@ -252,7 +261,11 @@ public class BlockManager : MonoBehaviour
         // Returns the blocks movement to normal speed.
         for (int i = 0; i < numberOfBlocks; ++i)
         {
-            blocks[i].GetComponent<BlockMovement>().SetMovementSpeed(startingMovementSpeed);
+            BlockMovement blockMovement = blocks[i].GetComponent<BlockMovement>();
+            if (blockMovement.GetMovementSpeed() != startingBlockSpeed)
+            {
+                blockMovement.SetMovementSpeed(startingBlockSpeed);
+            }
         }
     }
 }

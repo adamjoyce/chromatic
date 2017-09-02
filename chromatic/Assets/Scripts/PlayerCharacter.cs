@@ -79,9 +79,8 @@ public class PlayerCharacter : MonoBehaviour
         // Block collision.
         if (collision.gameObject.tag == "Block")
         {
-            // Slow game time and end game.
-            //Time.timeScale = 1f / 10f;
-            //Time.fixedDeltaTime = Time.fixedDeltaTime / 10f;
+            // Slow game time and reset game.
+            
         }
 
         // Menu selection.
