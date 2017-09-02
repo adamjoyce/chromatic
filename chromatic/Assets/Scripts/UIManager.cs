@@ -41,9 +41,14 @@ public class UIManager : MonoBehaviour
         quitText.color = textOriginalColor;
 
         // Set the score text rectangle size to match the background size.
-        float scoreWidth = backgroundRenderer.bounds.size.x;
-        scoreText.rectTransform.sizeDelta = new Vector2(scoreWidth, scoreText.rectTransform.sizeDelta.y);
-        Debug.Log(scoreWidth);
+        float xMin = Camera.main.WorldToScreenPoint(minBackgroundBound).x;
+        float xMax = Camera.main.WorldToScreenPoint(maxBackgroundBound).x;
+        scoreText.rectTransform.sizeDelta = new Vector2(xMax - xMin, scoreText.rectTransform.sizeDelta.y) / GetComponentInParent<Canvas>().scaleFactor;
+        scoreText.fontSize = (int)(scoreText.fontSize / GetComponentInParent<Canvas>().scaleFactor);
+        //scoreText.rectTransform.offsetMin = new Vector2(xMin, scoreText.rectTransform.offsetMin.x);
+        //scoreText.rectTransform.offsetMax = new Vector2(xMax, scoreText.rectTransform.offsetMax.x);
+        Debug.Log(xMin);
+        Debug.Log(xMax);
     }
 
     /* Update is called once per frame. */
