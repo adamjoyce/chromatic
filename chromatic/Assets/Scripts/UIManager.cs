@@ -30,11 +30,10 @@ public class UIManager : MonoBehaviour
         if (!scoreText) { scoreText = GameObject.Find("ScoreText").GetComponent<Text>(); }
 
         // Setup the menu text element positions.
-        Vector3 playerScreenPosition = /*Camera.main.WorldToScreenPoint*/(player.position);
-        Vector3 minBackgroundBound = /*Camera.main.WorldToScreenPoint*/(backgroundRenderer.bounds.min);
-        Vector3 maxBackgroundBound = /*Camera.main.WorldToScreenPoint*/(backgroundRenderer.bounds.max);
-        playText.transform.position = new Vector3(minBackgroundBound.x, playerScreenPosition.y, 0);
-        quitText.transform.position = new Vector3(maxBackgroundBound.x, playerScreenPosition.y, 0);
+        Vector3 minBackgroundBound = backgroundRenderer.bounds.min;
+        Vector3 maxBackgroundBound = backgroundRenderer.bounds.max;
+        playText.transform.position = new Vector3(minBackgroundBound.x, player.position.y, 0);
+        quitText.transform.position = new Vector3(maxBackgroundBound.x, player.position.y, 0);
 
         // Set the menu text elements starting colors.
         playText.color = textOriginalColor;
@@ -44,11 +43,6 @@ public class UIManager : MonoBehaviour
         float xMin = Camera.main.WorldToScreenPoint(minBackgroundBound).x;
         float xMax = Camera.main.WorldToScreenPoint(maxBackgroundBound).x;
         scoreText.rectTransform.sizeDelta = new Vector2(xMax - xMin, scoreText.rectTransform.sizeDelta.y) / GetComponentInParent<Canvas>().scaleFactor;
-        scoreText.fontSize = (int)(scoreText.fontSize / GetComponentInParent<Canvas>().scaleFactor);
-        //scoreText.rectTransform.offsetMin = new Vector2(xMin, scoreText.rectTransform.offsetMin.x);
-        //scoreText.rectTransform.offsetMax = new Vector2(xMax, scoreText.rectTransform.offsetMax.x);
-        Debug.Log(xMin);
-        Debug.Log(xMax);
     }
 
     /* Update is called once per frame. */
@@ -99,6 +93,12 @@ public class UIManager : MonoBehaviour
             quitText.color = textFlashColor;
         }
         flashStartTime = Time.time;
+    }
+
+    /* Updates the score text UI element. */
+    public void UpdateScore(int score)
+    {
+        scoreText.text = score.ToString();
     }
 
     /* Animates the given UI text element with a flash. */

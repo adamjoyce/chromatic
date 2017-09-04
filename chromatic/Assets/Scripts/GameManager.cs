@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour 
 {
     public BlockManager blockManager;                       // The scene's block manager script used for tracking the number of block lines.
+    public UIManager UIManager;                             // The scene's ui manager script used for updating and resetting the score text.
     public int lineDifficultyIncrement = 5;                 // The number of lines that must be passed before the difficulty increases.
     public float difficultyMultiplier = 1.1f;               // The amount by with the difficulty increases every set number of lines.
 
@@ -19,6 +20,7 @@ public class GameManager : MonoBehaviour
 	private void Start() 
 	{
 		if (!blockManager) { blockManager = FindObjectOfType<BlockManager>(); }
+        if (!UIManager) { UIManager = FindObjectOfType<UIManager>(); }
         if (!difficultyImage) { difficultyImage = GameObject.Find("DifficultyFlash").GetComponent<Image>(); }
 
         // Start with a clear screen.
@@ -63,6 +65,7 @@ public class GameManager : MonoBehaviour
     public void SetLineScore(int newScore)
     {
         lineScore = newScore;
+        UIManager.UpdateScore(lineScore);
     }
 
     /* Returns true if the difficulty has already been incremented for this set of block lines. */
