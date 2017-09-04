@@ -101,6 +101,13 @@ public class UIManager : MonoBehaviour
         scoreText.text = score.ToString();
     }
 
+    /* Enable/Disable menu display. */
+    public void SetMenu(bool isActive)
+    {
+        playText.gameObject.SetActive(isActive);
+        quitText.gameObject.SetActive(isActive);
+    }
+
     /* Animates the given UI text element with a flash. */
     private IEnumerator ActivateBehaviourAfterAnimation(Text text)
     {
@@ -126,12 +133,5 @@ public class UIManager : MonoBehaviour
     private void Quit()
     {
         gameManager.QuitGame();
-    }
-
-    /* Enable/Disable menu display. */
-    private void SetMenu(bool isActive)
-    {
-        playText.gameObject.SetActive(isActive);
-        quitText.gameObject.SetActive(isActive);
     }
 }

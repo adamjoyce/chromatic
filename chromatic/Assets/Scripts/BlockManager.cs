@@ -13,7 +13,8 @@ public class BlockManager : MonoBehaviour
     private GameObject[] blocks;                // The array of blocks.
     private Vector3 spawnPosition;              // The starting spawn location for the line of blocks.
     private float despawnHeight;                // The height at which the block line is off the screen and can be recycled.
-    private float startingBlockSpeed;           // The movement speed of the blocks before each slow down from a color change.
+    private float normalBlockSpeed;             // The movement speed of the blocks before each slow down from a color change.
+    private float startingBlockSpeed;           // The initial block movement speed at the start of each game.
     private int enabledBlockIndex = 0;          // The index of a block in the line that is currently enabled, i.e. not the background colour.
     private bool solidLine = false;             // Indicates if there is no block matching the background color thus creating a solid line.
 
@@ -39,10 +40,14 @@ public class BlockManager : MonoBehaviour
     {
         if (gameManager.GetIsPlaying())
         {
-            if (!blocks[0])
+            if (!blocks[0] || gameManager.GetGameResetting())
             {
-                // The game has just begun.
+                // The game has just begun or been reset.
                 SpawnBlocks();
+                if (gameManager.GetGameResetting())
+                {
+                    gameManager.SetGameResetting(false);
+                }
             }
             else
             {
@@ -91,7 +96,18 @@ public class BlockManager : MonoBehaviour
             BlockMovement blockMovement = blocks[i].GetComponent<BlockMovement>();
             float newSpeed = blockMovement.GetMovementSpeed() * speedMultiplier;
             blockMovement.SetMovementSpeed(newSpeed);
-            startingBlockSpeed = newSpeed;
+            normalBlockSpeed = newSpeed;
+        }
+    }
+
+    /* Disables the block line and resets each block's movement speed. */
+    public void ResetBlockLine()
+    {
+        for (int i = 0; i < numberOfBlocks; ++i)
+        {
+            blocks[i].SetActive(false);
+            blocks[i].GetComponent<BlockMovement>().SetMovementSpeed(startingBlockSpeed);
+            normalBlockSpeed = startingBlockSpeed;
         }
     }
 
@@ -142,8 +158,10 @@ public class BlockManager : MonoBehaviour
                 }
             }
 
-            // Records the initial block movement speed for the first colour switch.
-            startingBlockSpeed = blocks[0].GetComponent<BlockMovement>().GetMovementSpeed();
+            // Records the initial block movement speed for the first colour switch and for future game resets.
+            float startingSpeed = blocks[0].GetComponent<BlockMovement>().GetMovementSpeed();
+            normalBlockSpeed = startingSpeed;
+            startingBlockSpeed = startingSpeed;
         }
         else
         {
@@ -178,7 +196,7 @@ public class BlockManager : MonoBehaviour
                 }
 
                 // Ensure the block's movement speed is reset to avoid blocks spawning slow due to late change changes.
-                blocks[i].GetComponent<BlockMovement>().SetMovementSpeed(startingBlockSpeed);
+                blocks[i].GetComponent<BlockMovement>().SetMovementSpeed(normalBlockSpeed);
             }
         }
 
@@ -250,10 +268,10 @@ public class BlockManager : MonoBehaviour
     private IEnumerator SlowBlocks()
     {
         // Slows the blocks movement.
-        startingBlockSpeed = blocks[0].GetComponent<BlockMovement>().GetMovementSpeed();
+        normalBlockSpeed = blocks[0].GetComponent<BlockMovement>().GetMovementSpeed();
         for (int i = 0; i < numberOfBlocks; ++i)
         {
-            blocks[i].GetComponent<BlockMovement>().SetMovementSpeed(startingBlockSpeed * 0.5f);
+            blocks[i].GetComponent<BlockMovement>().SetMovementSpeed(normalBlockSpeed * 0.5f);
         }
 
         yield return new WaitForSeconds(1.0f);
@@ -262,9 +280,9 @@ public class BlockManager : MonoBehaviour
         for (int i = 0; i < numberOfBlocks; ++i)
         {
             BlockMovement blockMovement = blocks[i].GetComponent<BlockMovement>();
-            if (blockMovement.GetMovementSpeed() != startingBlockSpeed)
+            if (blockMovement.GetMovementSpeed() != normalBlockSpeed)
             {
-                blockMovement.SetMovementSpeed(startingBlockSpeed);
+                blockMovement.SetMovementSpeed(normalBlockSpeed);
             }
         }
     }

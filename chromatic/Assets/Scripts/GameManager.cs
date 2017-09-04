@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour 
 {
+    public Transform player;                                // The player character's transform.
     public BlockManager blockManager;                       // The scene's block manager script used for tracking the number of block lines.
     public UIManager UIManager;                             // The scene's ui manager script used for updating and resetting the score text.
     public int lineDifficultyIncrement = 5;                 // The number of lines that must be passed before the difficulty increases.
@@ -12,13 +14,17 @@ public class GameManager : MonoBehaviour
     public Color difficultyImageColor = Color.white;        // The color of the difficulty image.
     public float flashSpeed = 5.0f;                         // The speed at which the difficulty image will fade.
 
+    public float gameOverSlowness = 10.0f;                  // The slow down that happens when the player loses.  
+
     private int lineScore = 0;                              // The number of block lines the player has successfully traversed.
     private bool difficultyIncremented = false;             // True if the difficult has been increased for the current block line.
     private bool isPlaying = false;                         // True when the player begins the game by selecting 'PLAY'.
+    private bool gameResetting = false;                     // True when the game has just reset.
 
 	/* Use this for initialization. */
 	private void Start() 
 	{
+        if (!player) { player = GameObject.Find("Player").transform; }
 		if (!blockManager) { blockManager = FindObjectOfType<BlockManager>(); }
         if (!UIManager) { UIManager = FindObjectOfType<UIManager>(); }
         if (!difficultyImage) { difficultyImage = GameObject.Find("DifficultyFlash").GetComponent<Image>(); }
@@ -92,6 +98,18 @@ public class GameManager : MonoBehaviour
         isPlaying = playing;
     }
 
+    /* Returns ture if the game is in the process of resetting. */
+    public bool GetGameResetting()
+    {
+        return gameResetting;
+    }
+
+    /* Sets whether or not the game is in the process of resetting. */
+    public void SetGameResetting(bool isResetting)
+    {
+        gameResetting = isResetting;
+    }
+
     /* Quits the game / editor. */
     public void QuitGame()
     {
@@ -99,5 +117,28 @@ public class GameManager : MonoBehaviour
 
         // Must be commented out when building.
         UnityEditor.EditorApplication.isPlaying = false;
+    }
+
+    /* Ends and resets the game. */
+    public IEnumerator EndAndResetGame()
+    {
+        // Slow down game time.
+        Time.timeScale = 1.0f / gameOverSlowness;
+        Time.fixedDeltaTime = Time.fixedDeltaTime / gameOverSlowness;
+
+        yield return new WaitForSeconds(1.0f / gameOverSlowness);
+
+        // Hide block line, reset player, activate menu, and reset score.
+        blockManager.ResetBlockLine();
+        player.position = new Vector2(0, player.position.y);
+        UIManager.SetMenu(true);
+        SetLineScore(0);
+
+        // Reset game time.
+        Time.timeScale = 1.0f;
+        Time.fixedDeltaTime = Time.fixedDeltaTime * gameOverSlowness;
+
+        gameResetting = true;
+        isPlaying = false;
     }
 }

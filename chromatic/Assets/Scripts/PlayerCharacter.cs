@@ -12,6 +12,8 @@ public class PlayerCharacter : MonoBehaviour
     private bool movePlayer = false;                // Signals for FixedUpdate to move the player.
     private float moveDirection = 0;                // Positive = right, negative = left.
 
+    private bool blockCollided = false;             // True when the player collides with a block - reset when the next gae begins.
+
     /* Use this for initialization. */
     private void Start()
     {
@@ -77,15 +79,18 @@ public class PlayerCharacter : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // Block collision.
-        if (collision.gameObject.tag == "Block")
+        if (!blockCollided && collision.gameObject.tag == "Block")
         {
+            blockCollided = true;
+
             // Slow game time and reset game.
-            
+            StartCoroutine(gameManager.EndAndResetGame());
         }
 
         // Menu selection.
         if (!gameManager.GetIsPlaying())
         {
+            blockCollided = false;
             UIManager.ActivateMenuOption(collision.gameObject.transform);
         }
     }
