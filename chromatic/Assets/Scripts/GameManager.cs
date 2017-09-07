@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     public Transform player;                                // The player character's transform.
     public BlockManager blockManager;                       // The scene's block manager script used for tracking the number of block lines.
     public UIManager UIManager;                             // The scene's ui manager script used for updating and resetting the score text.
+    public AudioManager audioManager;                       // The game's audio manager script for playing non-position dependent sound clips.
     public int lineDifficultyIncrement = 5;                 // The number of lines that must be passed before the difficulty increases.
     public float difficultyMultiplier = 1.1f;               // The amount by with the difficulty increases every set number of lines.
 
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
         if (!player) { player = GameObject.Find("Player").transform; }
 		if (!blockManager) { blockManager = FindObjectOfType<BlockManager>(); }
         if (!UIManager) { UIManager = FindObjectOfType<UIManager>(); }
+        if (!audioManager) { audioManager = FindObjectOfType<AudioManager>(); }
         if (!difficultyImage) { difficultyImage = GameObject.Find("DifficultyFlash").GetComponent<Image>(); }
 
         // Start with a clear screen.
@@ -59,6 +61,7 @@ public class GameManager : MonoBehaviour
     {
         blockManager.UpdateLinesMovementSpeed(difficultyMultiplier);
         difficultyImage.color = difficultyImageColor;
+        audioManager.Play("DifficultyIncrement");
     }
 
     /* Return the current line score. */
@@ -122,6 +125,9 @@ public class GameManager : MonoBehaviour
     /* Ends and resets the game. */
     public IEnumerator EndAndResetGame()
     {
+        // Player death sound.
+        audioManager.Play("PlayerDeath");
+
         // Slow down game time.
         Time.timeScale = 1.0f / gameOverSlowness;
         Time.fixedDeltaTime = Time.fixedDeltaTime / gameOverSlowness;
