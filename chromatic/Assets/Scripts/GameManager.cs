@@ -128,11 +128,10 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.0f / gameOverSlowness);
 
-        // Hide block line, reset player, activate menu, and reset score.
+        // Hide block line, reset player, activate menu.
         blockManager.ResetBlockLine();
         player.position = new Vector2(0, player.position.y);
         UIManager.SetMenu(true);
-        SetLineScore(0);
 
         // Reset game time.
         Time.timeScale = 1.0f;

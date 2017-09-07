@@ -7,6 +7,7 @@ public class BlockManager : MonoBehaviour
     public GameObject blockPrefab;              // The block that will make up each line.
     public GameManager gameManager;             // The game manager for updating the current score.
     public ColorManager colorManager;           // The color manager in the scene.
+    public AudioManager audioManager;           // The audio manager for all non-position dependent audio in the game.
     public Renderer backgroundRenderer;         // The background's renderer component - used for block spacing and start position.
     public int numberOfBlocks = 5;              // The number of blocks each line is made up of.
 
@@ -24,6 +25,7 @@ public class BlockManager : MonoBehaviour
         // Grab the manager scripts if it is not assigned in the editor.
         if (!gameManager) { gameManager = FindObjectOfType<GameManager>(); }
         if (!colorManager) { colorManager = FindObjectOfType<ColorManager>(); }
+        if (!audioManager) { audioManager = FindObjectOfType<AudioManager>(); }
 
         blocks = new GameObject[numberOfBlocks];
 
@@ -56,6 +58,7 @@ public class BlockManager : MonoBehaviour
                 {
                     SpawnBlocks();
                     gameManager.SetLineScore(gameManager.GetLineScore() + 1);
+                    audioManager.Play("ScoreIncrement");
                 }
             }
         }

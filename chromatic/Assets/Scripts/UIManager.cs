@@ -127,6 +127,9 @@ public class UIManager : MonoBehaviour
     {
         SetMenu(false);
         gameManager.SetIsPlaying(true);
+
+        // Reset the game score.
+        gameManager.SetLineScore(0);
     }
 
     /* the beahviour called when the 'QUIT' menu option is selected. */
