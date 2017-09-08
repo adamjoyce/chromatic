@@ -8,6 +8,7 @@ public class LogoDelay : MonoBehaviour
 	/* Use this for initialization. */
 	private void Start() 
 	{
+        Cursor.visible = false;
         StartCoroutine(WaitAndLoadScene("Game"));
 	}
 

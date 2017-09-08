@@ -119,7 +119,7 @@ public class GameManager : MonoBehaviour
         Application.Quit();
 
         // Must be commented out when building.
-        UnityEditor.EditorApplication.isPlaying = false;
+        //UnityEditor.EditorApplication.isPlaying = false;
     }
 
     /* Ends and resets the game. */
