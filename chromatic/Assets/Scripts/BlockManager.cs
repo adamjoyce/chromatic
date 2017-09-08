@@ -40,15 +40,15 @@ public class BlockManager : MonoBehaviour
     /* Update is called once per frame. */
     private void Update()
     {
-        if (gameManager.GetIsPlaying())
+        if (gameManager.IsPlaying)
         {
-            if (!blocks[0] || gameManager.GetGameResetting())
+            if (!blocks[0] || gameManager.GameResetting)
             {
                 // The game has just begun or been reset.
                 SpawnBlocks();
-                if (gameManager.GetGameResetting())
+                if (gameManager.GameResetting)
                 {
-                    gameManager.SetGameResetting(false);
+                    gameManager.GameResetting = false;
                 }
             }
             else
@@ -57,7 +57,7 @@ public class BlockManager : MonoBehaviour
                 if (blocks[enabledBlockIndex].transform.position.y >= (despawnHeight * 0.5f))
                 {
                     SpawnBlocks();
-                    gameManager.SetLineScore(gameManager.GetLineScore() + 1);
+                    gameManager.LineScore = gameManager.LineScore + 1;
                     audioManager.Play("ScoreIncrement");
                 }
             }
@@ -206,16 +206,16 @@ public class BlockManager : MonoBehaviour
         // Reset the x spawn coordinate for the next time the function is called.
         spawnPosition.x -= gapSize + (blockWidth * 0.5f);
 
-        if (colorManager.GetBackgroundChanged())
+        if (colorManager.BackgroundChanged)
         {
             // Set it so that it is possible for the background color to change again.
-            colorManager.SetBackgroundChanged(false);
+            colorManager.BackgroundChanged = false;
         }
 
-        if (gameManager.GetDifficultyIncremented())
+        if (gameManager.DifficultyIncremented)
         {
             // Set is so that the difficulty can be increased after the next set of lines.
-            gameManager.SetDifficultyIncremented(false);
+            gameManager.DifficultyIncremented = false;
         }
     }
 

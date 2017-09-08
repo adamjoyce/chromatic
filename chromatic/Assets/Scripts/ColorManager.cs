@@ -8,6 +8,10 @@ public class ColorManager : MonoBehaviour
 
     private bool backgroundChanged = false;     // Indicates the background has changed once already this block line.
 
+    /* PROPERTIES. */
+    public bool BackgroundChanged { get; set; }
+    /* END OF PROPERTIES. */
+
     /* Use this for initialization. */
     private void Start() 
 	{
@@ -34,17 +38,5 @@ public class ColorManager : MonoBehaviour
         Camera.main.backgroundColor = newColor * 0.5f;
 
         return newColor;
-    }
-
-    /* Returns if the background has been changed this block line. */
-    public bool GetBackgroundChanged()
-    {
-        return backgroundChanged;
-    }
-
-    /* Sets if the background has been changed this block line. */
-    public void SetBackgroundChanged(bool changed)
-    {
-        backgroundChanged = changed;
     }
 }

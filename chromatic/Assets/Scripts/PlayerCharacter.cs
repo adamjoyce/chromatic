@@ -35,11 +35,11 @@ public class PlayerCharacter : MonoBehaviour
         }
 
         // Changing background color.
-        if (gameManager.GetIsPlaying())
+        if (gameManager.IsPlaying)
         {
-            if (!colorManager.GetBackgroundChanged() && Input.GetKeyDown(KeyCode.Space))
+            if (!colorManager.BackgroundChanged && Input.GetKeyDown(KeyCode.Space))
             {
-                if (blockManager.GetSolidLine() && !colorManager.GetBackgroundChanged())
+                if (blockManager.GetSolidLine() && !colorManager.BackgroundChanged)
                 {
                     Color backgroundColor = colorManager.ChangeBackgroundColor();
                     FindObjectOfType<AudioManager>().Play("ColorChange");
@@ -49,7 +49,7 @@ public class PlayerCharacter : MonoBehaviour
                     blockManager.ApplyAdjustmentWindow();
 
                     // Avoid cycling colors more than once per block line.
-                    colorManager.SetBackgroundChanged(true);
+                    colorManager.BackgroundChanged = true;
                 }
                 else
                 {
@@ -92,7 +92,7 @@ public class PlayerCharacter : MonoBehaviour
         }
 
         // Menu selection.
-        if (!gameManager.GetIsPlaying())
+        if (!gameManager.IsPlaying)
         {
             blockCollided = false;
             UIManager.ActivateMenuOption(collision.gameObject.transform);

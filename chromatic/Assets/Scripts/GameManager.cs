@@ -22,6 +22,21 @@ public class GameManager : MonoBehaviour
     private bool isPlaying = false;                         // True when the player begins the game by selecting 'PLAY'.
     private bool gameResetting = false;                     // True when the game has just reset.
 
+    /* PROPERTIES. */
+    public int LineScore
+    {
+        get { return lineScore; }
+        set {
+            lineScore = value;
+            UIManager.UpdateScore(lineScore);
+        }
+    }
+
+    public bool DifficultyIncremented { get; set; }
+    public bool IsPlaying { get; set; }
+    public bool GameResetting { get; set; }
+    /* END OF PROPERTIES. */
+
 	/* Use this for initialization. */
 	private void Start() 
 	{
@@ -38,7 +53,7 @@ public class GameManager : MonoBehaviour
 	/* Update is called once per frame. */
 	private void Update() 
 	{
-        if (isPlaying)
+        if (IsPlaying)
         {
             // Difficulty scaling.
             if (!difficultyIncremented && lineScore != 0 && (lineScore % lineDifficultyIncrement) == 0)
@@ -62,55 +77,6 @@ public class GameManager : MonoBehaviour
         blockManager.UpdateLinesMovementSpeed(difficultyMultiplier);
         difficultyImage.color = difficultyImageColor;
         audioManager.Play("DifficultyIncrement");
-    }
-
-    /* Return the current line score. */
-    public int GetLineScore()
-    {
-        return lineScore;
-    }
-
-    /* Sets the new line score. */
-    public void SetLineScore(int newScore)
-    {
-        lineScore = newScore;
-        UIManager.UpdateScore(lineScore);
-    }
-
-    /* Returns true if the difficulty has already been incremented for this set of block lines. */
-    public bool GetDifficultyIncremented()
-    {
-        return difficultyIncremented;
-    }
-
-    /* Sets the flag indicating the difficulty has been increased for the current set of block lines. */
-    public void SetDifficultyIncremented(bool isIncremented)
-    {
-        difficultyIncremented = isIncremented;
-    }
-
-    /* Return true if the game is currently in progress. */
-    public bool GetIsPlaying()
-    {
-        return isPlaying;
-    }
-
-    /* Sets whether or not the game is in progress. */
-    public void SetIsPlaying(bool playing)
-    {
-        isPlaying = playing;
-    }
-
-    /* Returns ture if the game is in the process of resetting. */
-    public bool GetGameResetting()
-    {
-        return gameResetting;
-    }
-
-    /* Sets whether or not the game is in the process of resetting. */
-    public void SetGameResetting(bool isResetting)
-    {
-        gameResetting = isResetting;
     }
 
     /* Quits the game / editor. */
@@ -143,7 +109,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1.0f;
         Time.fixedDeltaTime = Time.fixedDeltaTime * gameOverSlowness;
 
-        gameResetting = true;
-        isPlaying = false;
+        GameResetting = true;
+        IsPlaying = false;
     }
 }

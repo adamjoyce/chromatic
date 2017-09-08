@@ -48,7 +48,7 @@ public class UIManager : MonoBehaviour
     /* Update is called once per frame. */
     private void Update()
     {
-        if (!gameManager.GetIsPlaying())
+        if (!gameManager.IsPlaying)
         {
             if (playSelected)
             {
@@ -127,10 +127,10 @@ public class UIManager : MonoBehaviour
     private void Play()
     {
         SetMenu(false);
-        gameManager.SetIsPlaying(true);
+        gameManager.IsPlaying = true;
 
         // Reset the game score.
-        gameManager.SetLineScore(0);
+        gameManager.LineScore = 0;
     }
 
     /* The beahviour called when the 'QUIT' menu option is selected. */
