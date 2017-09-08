@@ -111,6 +111,7 @@ public class UIManager : MonoBehaviour
     /* Animates the given UI text element with a flash. */
     private IEnumerator ActivateBehaviourAfterAnimation(Text text)
     {
+        FindObjectOfType<AudioManager>().Play("MenuSelection");
         yield return new WaitForSeconds(fadeSpeed);
         if (text == playText)
         {
@@ -127,9 +128,12 @@ public class UIManager : MonoBehaviour
     {
         SetMenu(false);
         gameManager.SetIsPlaying(true);
+
+        // Reset the game score.
+        gameManager.SetLineScore(0);
     }
 
-    /* the beahviour called when the 'QUIT' menu option is selected. */
+    /* The beahviour called when the 'QUIT' menu option is selected. */
     private void Quit()
     {
         gameManager.QuitGame();

@@ -11,4 +11,9 @@ public class Sound
     public float volume;                // The volume for the clip.
     [Range(0.1f, 3.0f)]
     public float picth;                 // The pitch for the clip.
+
+    public bool loop;                   // True if the clip is meant to loop.
+
+    [HideInInspector]
+    public AudioSource audioSource;    // The assigned audio source for this sound clip.
 }

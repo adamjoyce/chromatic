@@ -17,5 +17,13 @@ public class LogoDelay : MonoBehaviour
         SceneController sceneController = FindObjectOfType<SceneController>();
         yield return new WaitForSeconds(logoDelay);
         sceneController.FadeAndLoadScene(scene);
+        SceneController.AfterSceneLoad += PlayBackgroundAudio;
+    }
+
+    /* Starts playing the background audio after the game scene is loaded. */
+    private void PlayBackgroundAudio()
+    {
+        FindObjectOfType<AudioManager>().Play("Background");
+        SceneController.AfterSceneLoad -= PlayBackgroundAudio;
     }
 }
