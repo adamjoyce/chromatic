@@ -35,23 +35,27 @@ public class PlayerCharacter : MonoBehaviour
         }
 
         // Changing background color.
-        if (!colorManager.GetBackgroundChanged() && Input.GetKeyDown(KeyCode.Space))
+        if (gameManager.GetIsPlaying())
         {
-            if (blockManager.GetSolidLine() && !colorManager.GetBackgroundChanged())
+            if (!colorManager.GetBackgroundChanged() && Input.GetKeyDown(KeyCode.Space))
             {
-                Color backgroundColor = colorManager.ChangeBackgroundColor();
-                blockManager.UpdateBlockVisibility(backgroundColor);
+                if (blockManager.GetSolidLine() && !colorManager.GetBackgroundChanged())
+                {
+                    Color backgroundColor = colorManager.ChangeBackgroundColor();
+                    FindObjectOfType<AudioManager>().Play("ColorChange");
+                    blockManager.UpdateBlockVisibility(backgroundColor);
 
-                // Slow down time to allow for adjustments.
-                blockManager.ApplyAdjustmentWindow();
+                    // Slow down time to allow for adjustments.
+                    blockManager.ApplyAdjustmentWindow();
 
-                // Avoid cycling colors more than once per block line.
-                colorManager.SetBackgroundChanged(true);
-            }
-            else
-            {
-                // Punish background color change spam by increasing the diffiuclty.
-                gameManager.IncreaseDifficulty();
+                    // Avoid cycling colors more than once per block line.
+                    colorManager.SetBackgroundChanged(true);
+                }
+                else
+                {
+                    // Punish background color change spam by increasing the diffiuclty.
+                    gameManager.IncreaseDifficulty();
+                }
             }
         }
     }

@@ -24,7 +24,7 @@ public class AudioManager : MonoBehaviour
     /* Use this for initialization. */
     private void Start() 
 	{
-		
+        //Play("Background");
 	}
 	
 	/* Plays a given sound clip. */
